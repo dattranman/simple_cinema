@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  simple_cinema_postgres:
+    platform: linux/amd64
+    container_name: simple_cinema_postgres
+    image: postgres
+    restart: always
+    volumes:
+      - simple_cinema_data:/var/lib/postgresql/data
+
+  simple_cinema_redis:
+    container_name: simple_cinema_redis
+    image: redis
+    restart: always
+
+  simple_cinema:
+    container_name: simple_cinema
+    image: simple_cinema
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./config:/config
+    ports:
+      - "9990:9990"
+    depends_on:
+      - "simple_cinema_postgres"
+      - "simple_cinema_redis"
+
+volumes:
+  simple_cinema_data:

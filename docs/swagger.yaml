@@ -1,0 +1,259 @@
+definitions:
+  request.BookingSeats:
+    properties:
+      seats:
+        items:
+          $ref: '#/definitions/request.Seat'
+        type: array
+    type: object
+  request.CreateRoom:
+    properties:
+      column:
+        type: integer
+      min_distance:
+        type: integer
+      row:
+        type: integer
+    required:
+    - column
+    - row
+    type: object
+  request.DeleteSeat:
+    properties:
+      seats:
+        items:
+          $ref: '#/definitions/request.Seat'
+        type: array
+    type: object
+  request.Seat:
+    properties:
+      column:
+        type: integer
+      row:
+        type: integer
+    type: object
+  response.Base:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  response.BookingSeats:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      seats:
+        items:
+          $ref: '#/definitions/response.Seat'
+        type: array
+    type: object
+  response.GetAvailableSeats:
+    properties:
+      available_seats:
+        items:
+          $ref: '#/definitions/response.Seat'
+        type: array
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  response.Seat:
+    properties:
+      column:
+        type: integer
+      row:
+        type: integer
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a API for Vulcan Cinema.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Vulcan Cinema API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: check health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: check health
+  /api/v1/rooms:
+    get:
+      consumes:
+      - application/json
+      description: Get all rooms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Get all rooms
+    post:
+      consumes:
+      - application/json
+      description: Create room
+      parameters:
+      - description: Room
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateRoom'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Base'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Create room
+  /api/v1/rooms/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get room detail
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Base'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Get room detail
+  /api/v1/rooms/{id}/available-seats:
+    get:
+      consumes:
+      - application/json
+      description: Get available seats
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetAvailableSeats'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Get available seats
+  /api/v1/rooms/{id}/seats:
+    delete:
+      description: Cancel seat
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Seats
+        in: body
+        name: seats
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeleteSeat'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Base'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Cancel seat
+    post:
+      consumes:
+      - application/json
+      description: Booking seat
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Seats
+        in: body
+        name: seats
+        required: true
+        schema:
+          $ref: '#/definitions/request.BookingSeats'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BookingSeats'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Booking seat
+swagger: "2.0"

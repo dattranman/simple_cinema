@@ -1,0 +1,15 @@
+service_settings:
+  port: :9990
+  listen_address: 
+  prefix_url_public: http://localhost:9990/api/
+  api_version_path: v1
+sql_settings:
+  driver_name: postgres
+  uri:  postgres://postgres:postgres@simple_cinema_postgres:5432/postgres
+  timeout: 1
+  debug: true
+cache_settings:
+  uri: simple_cinema_redis:6379
+  password:
+  db: 0
+  timeout: 10
