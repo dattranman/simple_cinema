@@ -9,10 +9,13 @@ definitions:
   request.CreateRoom:
     properties:
       column:
+        example: 5
         type: integer
       min_distance:
+        example: 6
         type: integer
       row:
+        example: 4
         type: integer
     required:
     - column
@@ -35,17 +38,21 @@ definitions:
   response.Base:
     properties:
       code:
+        example: 1
         type: integer
       data: {}
       message:
+        example: Success
         type: string
     type: object
   response.BookingSeats:
     properties:
       code:
+        example: 1
         type: integer
       data: {}
       message:
+        example: Success
         type: string
       seats:
         items:
@@ -59,16 +66,20 @@ definitions:
           $ref: '#/definitions/response.Seat'
         type: array
       code:
+        example: 1
         type: integer
       data: {}
       message:
+        example: Success
         type: string
     type: object
   response.Seat:
     properties:
       column:
+        example: 0
         type: integer
       row:
+        example: 0
         type: integer
     type: object
 info:
@@ -142,6 +153,32 @@ paths:
             $ref: '#/definitions/response.Base'
       summary: Create room
   /api/v1/rooms/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete room
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Base'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Base'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Base'
+      summary: Delete room
     get:
       consumes:
       - application/json

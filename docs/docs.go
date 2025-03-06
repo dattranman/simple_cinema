@@ -150,6 +150,45 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Delete room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete room",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Base"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Base"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Base"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/rooms/{id}/available-seats": {
@@ -306,13 +345,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "column": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 5
                 },
                 "min_distance": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 6
                 },
                 "row": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 4
                 }
             }
         },
@@ -342,11 +384,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "data": {},
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Success"
                 }
             }
         },
@@ -354,11 +398,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "data": {},
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Success"
                 },
                 "seats": {
                     "type": "array",
@@ -378,11 +424,13 @@ const docTemplate = `{
                     }
                 },
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "data": {},
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Success"
                 }
             }
         },
@@ -390,10 +438,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "column": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                 },
                 "row": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                 }
             }
         }

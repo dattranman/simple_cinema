@@ -1,6 +1,6 @@
 # simple_cinema
 
-Vulcan Cinema is a web application that allows users book seats for a movie.
+Simple Cinema is a web application that allows users book seats for a movie.
 
 ## Features
 - Create room
