@@ -15,7 +15,8 @@ func NewSeatStore(postgresql *PostgresStore) store.Seat {
 
 func (s *PostgresqlSeatStore) GetByRoomID(roomID int) ([]*schema.Seat, error) {
 	var seats []*schema.Seat
-	if err := s.postgresql.db.Where("room_id = ?", roomID).Find(&seats).Error; err != nil {
+	err := s.postgresql.db.Where("room_id = ?", roomID).Find(&seats).Error
+	if err != nil {
 		return nil, err
 	}
 	return seats, nil
