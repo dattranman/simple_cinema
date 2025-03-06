@@ -1,8 +1,8 @@
 package response
 
 type Seat struct {
-	Row    uint `json:"row"`
-	Column uint `json:"column"`
+	Row    uint `json:"row" example:"0"`
+	Column uint `json:"column" example:"0"`
 }
 
 type BookingSeats struct {

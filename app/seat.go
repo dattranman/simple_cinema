@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/dattranman/simple_cinema/model/request"
@@ -32,51 +31,24 @@ func CalculateMinDistanceFromTwoGroupSeat(group1, group2 []*schema.Seat) int {
 	return minDistance
 }
 
-func GetAvailableSeat(bookedSeat []*schema.Seat, room *schema.Room) []*schema.Seat {
-	availableSeat := []*schema.Seat{}
+func GetAvailableSeat(bookedSeat []*schema.Seat, room *schema.Room) schema.SeatList {
+	availableSeat := make(schema.SeatList, 0)
 	for row := 0; row < room.Row; row++ {
 		for col := 0; col < room.Column; col++ {
 			seat := schema.Seat{Row: row, Column: col}
-			if !contains(bookedSeat, seat) && isSafeForBooking(seat, bookedSeat, room.MinDistance) {
-				availableSeat = append(availableSeat, &seat)
+			if contains(bookedSeat, seat) || !isSafeForBooking(seat, bookedSeat, room.MinDistance) {
+				continue
 			}
+			availableSeat = append(availableSeat, seat)
 		}
 	}
 	return availableSeat
 }
 
-func GetAvailableSeatOptimized(bookedSeat []*schema.Seat, room *schema.Room) (availableSeats []*schema.Seat) {
-	const formatKeySeat = "%d-%d"
-	mapSeatCannotBeUsed := make(map[string]bool)
-	for _, seat := range bookedSeat {
-		mapSeatCannotBeUsed[fmt.Sprintf(formatKeySeat, seat.Row, seat.Column)] = true
-		for i := 1; i <= room.MinDistance; i++ {
-			if seat.Row+i < room.Row {
-				mapSeatCannotBeUsed[fmt.Sprintf(formatKeySeat, seat.Row+i, seat.Column)] = true
-			}
-			if seat.Row-i >= 0 {
-				mapSeatCannotBeUsed[fmt.Sprintf(formatKeySeat, seat.Row-i, seat.Column)] = true
-			}
-			if seat.Column+i < room.Column {
-				mapSeatCannotBeUsed[fmt.Sprintf(formatKeySeat, seat.Row, seat.Column+i)] = true
-			}
-			if seat.Column-i >= 0 {
-				mapSeatCannotBeUsed[fmt.Sprintf(formatKeySeat, seat.Row, seat.Column-i)] = true
-			}
-		}
-	}
-	for row := 0; row < room.Row; row++ {
-		for col := 0; col < room.Column; col++ {
-			if mapSeatCannotBeUsed[fmt.Sprintf(formatKeySeat, row, col)] {
-				continue
-			}
-			availableSeats = append(availableSeats, &schema.Seat{Row: row, Column: col})
-		}
-	}
-	return availableSeats
-}
-
 func isSafeForBooking(seat schema.Seat, bookedSeats []*schema.Seat, minDistance int) bool {
+	if len(bookedSeats) == 0 {
+		return true
+	}
 	for _, bookedSeat := range bookedSeats {
 		distance := CalculateDistanceTwoSeat(seat, *bookedSeat)
 		if distance > minDistance {
@@ -100,7 +72,7 @@ func (app *App) BookingSeat(req *request.BookingSeats) (resp *response.BookingSe
 	if err != nil {
 		return nil, err
 	}
-	bookedSeat, err := app.Store.Seat().GetByRoomID(room.ID)
+	bookedSeat, err := app.GetBookedSeatByRoomID(room)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +113,7 @@ func (app *App) BookingSeat(req *request.BookingSeats) (resp *response.BookingSe
 			Column: int(seat.Column),
 		}
 	}
-	err = app.Store.Seat().Create(dataSeat)
+	err = app.CreateBookedSeat(room.ID, dataSeat)
 	if err != nil {
 		return nil, err
 	}
@@ -157,27 +129,46 @@ func (app *App) BookingSeat(req *request.BookingSeats) (resp *response.BookingSe
 		Seats: responseSeats,
 	}, nil
 }
+func (app *App) CreateBookedSeat(roomID int, seats []*schema.Seat) (err error) {
+	err = app.Cache.Room().SetBookedSeat(roomID, seats)
+	if err != nil {
+		return err
+	}
+	err = app.Store.Seat().Create(seats)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (app *App) GetBookedSeatByRoomID(roomDetail *schema.Room) (bookedSeats []*schema.Seat, err error) {
+	bookedSeats, err = app.Cache.Room().GetBookedSeats(roomDetail)
+	if err == nil {
+		return bookedSeats, nil
+	}
+	bookedSeats, err = app.Store.Seat().GetByRoomID(roomDetail.ID)
+	if err != nil {
+		return nil, err
+	}
+	return bookedSeats, nil
+}
 
 func (app *App) GetAvailableSeats(req *request.GetAvailableSeats) (resp *response.GetAvailableSeats, err error) {
 	room, err := app.Store.Room().GetByID(req.RoomID)
 	if err != nil {
 		return nil, err
 	}
-	bookedSeat, err := app.Store.Seat().GetByRoomID(room.ID)
+	bookedSeat, err := app.GetBookedSeatByRoomID(room)
 	if err != nil {
 		return nil, err
 	}
 	availableSeat := GetAvailableSeat(bookedSeat, room)
-	responseAvailableSeat := make([]response.Seat, len(availableSeat))
-	for i, seat := range availableSeat {
-		responseAvailableSeat[i] = seat.ToResponse()
-	}
 	return &response.GetAvailableSeats{
 		Base: response.Base{
 			Message: "Available seats",
 			Code:    response.CodeSuccess,
 		},
-		AvailableSeats: responseAvailableSeat,
+		AvailableSeats: availableSeat.ToResponseList(),
 	}, nil
 }
 
@@ -194,7 +185,7 @@ func (app *App) CancelSeat(req *request.DeleteSeat) (resp *response.Base, err er
 			Column: int(seat.Column),
 		}
 	}
-	err = app.Store.Seat().Delete(room.ID, dataSeat)
+	err = app.DeleteBookedSeat(room.ID, dataSeat)
 	if err != nil {
 		return nil, err
 	}
@@ -202,4 +193,16 @@ func (app *App) CancelSeat(req *request.DeleteSeat) (resp *response.Base, err er
 		Message: "Seat canceled successfully",
 		Code:    response.CodeSuccess,
 	}, nil
+}
+
+func (app *App) DeleteBookedSeat(roomID int, seats []*schema.Seat) (err error) {
+	err = app.Cache.Room().DeleteBookedSeat(roomID, seats)
+	if err != nil {
+		return err
+	}
+	err = app.Store.Seat().Delete(roomID, seats)
+	if err != nil {
+		return err
+	}
+	return nil
 }

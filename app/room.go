@@ -62,3 +62,11 @@ func (a *App) CreateRoom(req request.CreateRoom) (resp *response.CreateRoom, err
 	}
 	return resp, nil
 }
+
+func (a *App) DeleteRoom(id int) (err error) {
+	err = a.Store.Room().Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

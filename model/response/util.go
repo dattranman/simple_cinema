@@ -7,8 +7,8 @@ const (
 )
 
 type Base struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    int    `json:"code" example:"1"`
+	Message string `json:"message" example:"Success"`
 	Data    any    `json:"data,omitempty"`
 }
 

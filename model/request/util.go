@@ -7,8 +7,8 @@ import (
 )
 
 type ID struct {
-	Version string `uri:"version" binding:"required"`
-	IDStr   string `uri:"id" binding:"required"`
+	Version string `uri:"version" binding:"required" example:"v1"`
+	IDStr   string `uri:"id" binding:"required" example:"1"`
 	ID      int    `uri:"-"`
 }
 

@@ -12,6 +12,7 @@ func (api *API) InitRoom() {
 	api.RoomRouter.GET("", api.GetRooms)
 	api.RoomRouter.GET("/:id", api.GetRoomDetail)
 	api.RoomRouter.POST("", api.CreateRoom)
+	api.RoomRouter.DELETE("/:id", api.DeleteRoom)
 }
 
 // GetRooms get all rooms
@@ -89,4 +90,37 @@ func (api *API) CreateRoom(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, room)
+}
+
+// DeleteRoom delete room
+// @Summary Delete room
+// @Description Delete room
+// @Accept json
+// @Produce json
+// @Param id path int true "Room ID"
+// @Success 200 {object} response.Base
+// @Failure 400 {object} response.Base
+// @Failure 500 {object} response.Base
+// @Router /api/v1/rooms/{id} [delete]
+func (api *API) DeleteRoom(c *gin.Context) {
+	var req request.DeleteRoom
+	err := req.Bind(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Base{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+
+	err = api.App.DeleteRoom(req.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.Base{
+			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
+		})
+	}
+	c.JSON(http.StatusOK, response.Base{
+		Code:    http.StatusOK,
+		Message: "Room deleted successfully",
+	})
 }
