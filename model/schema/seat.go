@@ -22,3 +22,13 @@ func (s *Seat) ToResponse() response.Seat {
 		Column: uint(s.Column),
 	}
 }
+
+type SeatList []Seat
+
+func (s SeatList) ToResponseList() []response.Seat {
+	responseList := make([]response.Seat, len(s))
+	for i, seat := range s {
+		responseList[i] = seat.ToResponse()
+	}
+	return responseList
+}

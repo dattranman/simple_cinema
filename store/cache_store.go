@@ -7,8 +7,8 @@ type CacheStore interface {
 }
 
 type RoomCache interface {
-	Get(id string) (*schema.Room, error)
-	SetBookedSeat(id string, seats []schema.Seat) error
-	GetBookedSeat(id string) ([]schema.Seat, error)
-	DeleteBookedSeat(id string, seats []schema.Seat) error
+	Get(id int) (*schema.Room, error)
+	SetBookedSeat(id int, seats []*schema.Seat) error
+	GetBookedSeats(roomDetail *schema.Room) ([]*schema.Seat, error)
+	DeleteBookedSeat(id int, seats []*schema.Seat) error
 }

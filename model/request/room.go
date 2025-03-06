@@ -5,9 +5,9 @@ import (
 )
 
 type CreateRoom struct {
-	Row         uint `json:"row" binding:"required"`
-	Column      uint `json:"column" binding:"required"`
-	MinDistance uint `json:"min_distance"`
+	Row         uint `json:"row" binding:"required" example:"4"`
+	Column      uint `json:"column" binding:"required" example:"5"`
+	MinDistance uint `json:"min_distance" example:"6"`
 }
 
 func (r *CreateRoom) Bind(c *gin.Context) error {
@@ -18,9 +18,10 @@ func (r *CreateRoom) Bind(c *gin.Context) error {
 }
 
 type UpdateRoom struct {
-	ID     string `uri:"id" binding:"required"`
-	Row    uint   `json:"row"`
-	Column uint   `json:"column"`
+	ID          string `uri:"id" binding:"required" example:"1"`
+	Row         uint   `json:"row" example:"4"`
+	Column      uint   `json:"column" example:"5"`
+	MinDistance uint   `json:"min_distance" example:"6"`
 }
 
 func (r *UpdateRoom) Bind(c *gin.Context) error {
@@ -34,10 +35,21 @@ func (r *UpdateRoom) Bind(c *gin.Context) error {
 }
 
 type GetRoomDetail struct {
-	ID int `uri:"id" binding:"required"`
+	ID int `uri:"id" binding:"required" example:"1"`
 }
 
 func (r *GetRoomDetail) Bind(c *gin.Context) error {
+	if err := c.ShouldBindUri(r); err != nil {
+		return err
+	}
+	return nil
+}
+
+type DeleteRoom struct {
+	ID int `uri:"id" binding:"required" example:"1"`
+}
+
+func (r *DeleteRoom) Bind(c *gin.Context) error {
 	if err := c.ShouldBindUri(r); err != nil {
 		return err
 	}

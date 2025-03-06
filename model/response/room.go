@@ -1,10 +1,10 @@
 package response
 
 type Room struct {
-	ID            int    `json:"id"`
-	Row           int    `json:"row"`
-	Column        int    `json:"column"`
-	MinDistance   int    `json:"min_distance"`
+	ID            int    `json:"id" example:"1"`
+	Row           int    `json:"row" example:"4"`
+	Column        int    `json:"column" example:"5"`
+	MinDistance   int    `json:"min_distance" example:"6"`
 	AvailableSeat []Seat `json:"available_seat"`
 	BookedSeat    []Seat `json:"booked_seat"`
 }
