@@ -75,6 +75,15 @@ func TestGetAvailableSeat(t *testing.T) {
 			want: schema.SeatList{
 				{Row: 3, Column: 4},
 			},
+		}, {
+			name: "test 4",
+			args: args{
+				bookedSeat: []*schema.Seat{{Row: 3, Column: 4}},
+				Room:       &schema.Room{Row: 4, Column: 5, MinDistance: 6},
+			},
+			want: schema.SeatList{
+				{Row: 0, Column: 0},
+			},
 		},
 	}
 	for _, tt := range tests {
