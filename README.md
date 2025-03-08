@@ -29,6 +29,7 @@ Simple Cinema is a web application that allows users book seats for a movie.
 - Docker (https://docs.docker.com/get-docker/)
 - Go (https://go.dev/doc/install)
 - Make (https://www.gnu.org/software/make/manual/make.html)
+- Goose (https://github.com/pressly/goose): tool to manage database migrations
 
 ## How to run
 - Clone the repository
