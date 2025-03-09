@@ -28,9 +28,7 @@ Simple Cinema is a web application that allows users book seats for a movie.
 ## Prerequisites
 - Docker (https://docs.docker.com/get-docker/)
 - Make (https://www.gnu.org/software/make/manual/make.html)
-### Step by step on new server
-- install docker: https://docs.docker.com/get-docker/
-- install make: https://www.gnu.org/software/make/manual/make.html
+
 ## How to run
 - Clone the repository
 - Run `make db` to start the database
@@ -45,7 +43,7 @@ Simple Cinema is a web application that allows users book seats for a movie.
 - Run `make create_migrate name=<migration_name>` to create a new migration file sql
 - Run `make create_migrate_code name=<migration_name>` to create a new migration file use golang
  
-### Summary about architecture code
+## Summary about architecture code
 - api: handle process request from client and call to app layer
 - app: handle business logic and call to store layer
 - config: handle logic read from file config.yaml or environment variable
@@ -61,5 +59,5 @@ Simple Cinema is a web application that allows users book seats for a movie.
     - store/redis: define the redis operation
 - util: define the util function for the application
 
-### Simple flow test:
+## Simple flow test:
 - Create room => Get room detail => Get available seats => Booking seat
