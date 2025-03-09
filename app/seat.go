@@ -72,7 +72,7 @@ func (app *App) BookingSeat(req *request.BookingSeats) (resp *response.BookingSe
 	if err != nil {
 		return nil, err
 	}
-	bookedSeat, err := app.Store.Seat().GetByRoomID(room.ID)
+	bookedSeat, err := app.GetBookedSeatByRoomID(room)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func (app *App) BookingSeat(req *request.BookingSeats) (resp *response.BookingSe
 			Column: int(seat.Column),
 		}
 	}
-	err = app.Store.Seat().Create(dataSeat)
+	err = app.CreateBookedSeat(room.ID, dataSeat)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func (app *App) GetAvailableSeats(req *request.GetAvailableSeats) (resp *respons
 	if err != nil {
 		return nil, err
 	}
-	bookedSeat, err := app.Store.Seat().GetByRoomID(room.ID)
+	bookedSeat, err := app.GetBookedSeatByRoomID(room)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +185,7 @@ func (app *App) CancelSeat(req *request.DeleteSeat) (resp *response.Base, err er
 			Column: int(seat.Column),
 		}
 	}
-	err = app.Store.Seat().Delete(room.ID, dataSeat)
+	err = app.DeleteBookedSeat(room.ID, dataSeat)
 	if err != nil {
 		return nil, err
 	}
