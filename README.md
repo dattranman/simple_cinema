@@ -31,8 +31,8 @@ Simple Cinema is a web application that allows users book seats for a movie.
 
 ## How to run
 - Clone the repository
-- Run `make db` to start the database
-- Run `make migrate` to run the migrations
+- create .env file and set the environment variable by using .env.example as reference
+- create config/config.yaml file and set the configuration by using config/config.yaml.example as reference
 - Run `make run` to start the application in local mode
 
 ## How to test

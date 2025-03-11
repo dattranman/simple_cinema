@@ -19,6 +19,7 @@ services:
     platform: linux/amd64
     image: gomicro/goose
     command: goose up -dir /migration/postgres
+    restart: "on-failure"
     volumes:
       - ./migration/postgres:/migration/postgres
       - .env:/.env
@@ -38,6 +39,7 @@ services:
   simple_cinema:
     container_name: simple_cinema
     image: simple_cinema
+    restart: always
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -48,7 +50,7 @@ services:
     depends_on:
       - "simple_cinema_postgres"
       - "simple_cinema_redis"
-
+      - "simple_cinema_goose"
 volumes:
   simple_cinema_data:
   simple_cinema_migration:
